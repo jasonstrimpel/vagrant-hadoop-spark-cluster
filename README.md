@@ -92,7 +92,7 @@ SSH into node2 and issue the following commands to start YARN.
 4. sudo $HADOOP_PREFIX/sbin/mr-jobhistory-daemon.sh start historyserver --config $HADOOP_CONF_DIR
 
 ### Test YARN
-Run the following command to make sure you can run a MapReduce job.
+Run the following command on node-2 to make sure you can run a MapReduce job.
 
 ```
 yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar pi 2 100
