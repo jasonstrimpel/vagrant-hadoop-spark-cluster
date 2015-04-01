@@ -112,7 +112,7 @@ $SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
     --master yarn-cluster \
     --num-executors 10 \
     --executor-cores 2 \
-    lib/spark-examples*.jar \
+    $SPARK_HOME/lib/spark-examples*.jar \
     100
 ```
 	
