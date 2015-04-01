@@ -42,7 +42,7 @@ To modify VM memory change the following line:
 line 13: ```v.customize ["modifyvm", :id, "--memory", "1024"]```  
 3. /scripts/common.sh  
 To use a different version of Java, change the following line depending on the version you downloaded to /resources directory.  
-line 4: JAVA_ARCHIVE=jdk-8u25-linux-i586.tar.gz // likely need to update this to jdk-8u25-linux-i586.gz
+line 4: JAVA_ARCHIVE=jdk-8u25-linux-i586.gz  
 To use a different version of Hadoop you've already downloaded to /resources directory, change the following line:  
 line 8: ```HADOOP_VERSION=hadoop-2.6.0```  
 To use a different version of Hadoop to be downloaded, change the remote URL in the following line:  
