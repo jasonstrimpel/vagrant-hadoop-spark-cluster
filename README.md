@@ -2,7 +2,7 @@ vagrant-hadoop-spark-cluster
 ============================
 
 # 1. Introduction
-### Vagrant project to spin up a cluster of 4, 32-bit CentOS6.5 Linux virtual machines with Hadoop v2.6.0 and Spark v1.1.1. 
+### Vagrant project to spin up a cluster of 4, 32-bit CentOS6.5 Linux virtual machines with Hadoop v2.6.0 and Spark v1.3.0. 
 Ideal for development cluster on a laptop with at least 4GB of memory.
 
 1. node1 : HDFS NameNode + Spark Master
@@ -23,8 +23,8 @@ Ideal for development cluster on a laptop with at least 4GB of memory.
 3. Run ```vagrant box add centos65 http://files.brianbirkinbine.com/vagrant-centos-65-i386-minimal.box```
 4. Git clone this project, and change directory (cd) into this project (directory).
 5. [Download Hadoop 2.6 into the /resources directory](http://apache.crihan.fr/dist/hadoop/common/stable/hadoop-2.6.0.tar.gz)
-6. [Download Spark 1.1.1 into the /resources directory](http://d3kbcqa49mib13.cloudfront.net/spark-1.1.1-bin-hadoop2.4.tgz)
-7. [Download Java 1.8 into the /resources directory](http://download.oracle.com/otn-pub/java/jdk/8u25-b17/jdk-8u25-linux-i586.tar.gz)
+6. [Download Spark 1.3.0 into the /resources directory](http://www.mirrorservice.org/sites/ftp.apache.org/spark/spark-1.3.0/spark-1.3.0-bin-hadoop2.4.tgz)
+7. [Download Java 1.8 into the /resources directory](http://download.oracle.com/otn-pub/java/jdk/8u25-b17/jdk-8u25-linux-i586.tar.gz) probably have to do this manually due to license agreement, also note that it is downloaded as .gz not .tar.gz
 8. Run ```vagrant up``` to create the VM.
 9. Run ```vagrant ssh``` to get into your VM.
 10. Run ```vagrant destroy``` when you want to destroy and get rid of the VM.
@@ -42,19 +42,19 @@ To modify VM memory change the following line:
 line 13: ```v.customize ["modifyvm", :id, "--memory", "1024"]```  
 3. /scripts/common.sh  
 To use a different version of Java, change the following line depending on the version you downloaded to /resources directory.  
-line 4: JAVA_ARCHIVE=jdk-8u25-linux-i586.tar.gz  
+line 4: JAVA_ARCHIVE=jdk-8u25-linux-i586.tar.gz // likely need to update this to jdk-8u25-linux-i586.gz
 To use a different version of Hadoop you've already downloaded to /resources directory, change the following line:  
 line 8: ```HADOOP_VERSION=hadoop-2.6.0```  
 To use a different version of Hadoop to be downloaded, change the remote URL in the following line:  
 line 10: ```HADOOP_MIRROR_DOWNLOAD=http://apache.crihan.fr/dist/hadoop/common/stable/hadoop-2.6.0.tar.gz```  
 To use a different version of Spark, change the following lines:  
-line 13: ```SPARK_VERSION=spark-1.1.1```  
+line 13: ```SPARK_VERSION=spark-1.3.0```  
 line 14: ```SPARK_ARCHIVE=$SPARK_VERSION-bin-hadoop2.4.tgz```  
-line 15: ```SPARK_MIRROR_DOWNLOAD=../resources/spark-1.1.1-bin-hadoop2.4.tgz```  
+line 15: ```SPARK_MIRROR_DOWNLOAD=../resources/spark-1.3.0-bin-hadoop2.4.tgz```  
 
 3. /scripts/setup-java.sh  
 To install from Java downloaded locally in /resources directory, if different from default version (1.8.0_25), change the version in the following line:  
-line 18: ```ln -s /usr/local/jdk1.8.0_25 /usr/local/java```  
+line 18: ```ln -s /usr/local/jdk1.8.0_25 /usr/local/java``` 
 To modify version of Java to be installed from remote location on the web, change the version in the following line:  
 line 12: ```yum install -y jdk-8u25-linux-i586```  
 
@@ -74,20 +74,22 @@ Commands below require root permissions. Change to root access using ```sudo su`
 
 Issue the following command. 
 
-1. $HADOOP_PREFIX/bin/hdfs namenode -format myhadoop
+1. sudo $HADOOP_PREFIX/bin/hdfs namenode -format myhadoop
+
+If you get a ```JAVA_HOME not set``` error then edit the /usr/local/hadoop/etc/hadoop/hadoop-env.sh file and change ```export JAVA_HOME=/usr/local/java``` to ```export JAVA_HOME=/usr/local/jdk1.8.0_25``` or perhaps try running the commands above (and below) not as root
 
 ## Start Hadoop Daemons (HDFS + YARN)
 SSH into node1 and issue the following commands to start HDFS.
 
-1. $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
-2. $HADOOP_PREFIX/sbin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
+1. sudo $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
+2. sudo $HADOOP_PREFIX/sbin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
 
 SSH into node2 and issue the following commands to start YARN.
 
-1. $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR start resourcemanager
-2. $HADOOP_YARN_HOME/sbin/yarn-daemons.sh --config $HADOOP_CONF_DIR start nodemanager
-3. $HADOOP_YARN_HOME/sbin/yarn-daemon.sh start proxyserver --config $HADOOP_CONF_DIR
-4. $HADOOP_PREFIX/sbin/mr-jobhistory-daemon.sh start historyserver --config $HADOOP_CONF_DIR
+1. sudo $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR start resourcemanager
+2. sudo $HADOOP_YARN_HOME/sbin/yarn-daemons.sh --config $HADOOP_CONF_DIR start nodemanager
+3. sudo $HADOOP_YARN_HOME/sbin/yarn-daemon.sh start proxyserver --config $HADOOP_CONF_DIR
+4. sudo $HADOOP_PREFIX/sbin/mr-jobhistory-daemon.sh start historyserver --config $HADOOP_CONF_DIR
 
 ### Test YARN
 Run the following command to make sure you can run a MapReduce job.
@@ -99,7 +101,7 @@ yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.
 ## Start Spark in Standalone Mode
 SSH into node1 and issue the following command.
 
-1. $SPARK_HOME/sbin/start-all.sh
+1. sudo $SPARK_HOME/sbin/start-all.sh
 
 ### Test Spark on YARN
 You can test if Spark can run on YARN by issuing the following command. Try NOT to run this command on the slave nodes.
