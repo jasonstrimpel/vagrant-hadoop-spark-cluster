@@ -103,6 +103,8 @@ SSH into node1 and issue the following command.
 
 1. sudo $SPARK_HOME/sbin/start-all.sh
 
+If this fails, end ```/usr/local/spark/conf/spark-env.sh``` and add ```JAVA_HOME=/usr/local/jdk1.8.0_25```
+
 ### Test Spark on YARN
 You can test if Spark can run on YARN by issuing the following command. Try NOT to run this command on the slave nodes.
 ```
